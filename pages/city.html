@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City - Morocco Travel</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#69c8c8',
+              dark: '#4bb3b3',
+            },
+            secondary: {
+              DEFAULT: '#3F20FB',
+              dark: '#4f46e5',
+            },
+            accent: {
+              DEFAULT: '#FFF8F2',
+              dark: '#1f1f1f',
+            },
+            dark: {
+              bg: '#1f2937',
+              'bg-alt': '#111827',
+              'bg-accent': '#2d3748',
+              border: '#374151',
+            }
+          },
+        }
+      },
+    };
+  </script>
+
+  <!-- Base styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/city.css">
+
+  <style>
+    /* Additional styles for dark mode transitions */
+    html.transition,
+    html.transition *,
+    html.transition *:before,
+    html.transition *:after {
+      transition: all 0.3s ease-in-out !important;
+      transition-delay: 0 !important;
+    }
+  </style>
+</head>
+<body class="dark:bg-dark-bg dark:text-gray-100" data-page="city">
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress-container dark:bg-gray-700">
+    <div class="scroll-progress-bar"></div>
+  </div>
+
+  <!-- Header Placeholder -->
+  <header id="header-placeholder" class="bg-white dark:bg-dark-bg border-b border-gray-200 dark:border-dark-border">
+    <!-- Header will be loaded here -->
+  </header>
+
+  <!-- Loading state -->
+  <div id="loading-state" class="flex justify-center items-center h-screen">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-teal-600 dark:border-teal-500"></div>
+  </div>
+
+  <!-- Content will be loaded here -->
+  <div id="city-content" class="hidden">
+    <!-- Hero Section -->
+    <section id="destination-hero" class="relative h-[600px]">
+      <div class="absolute inset-0">
+        <img id="hero-image" class="w-full h-full object-cover" src="" alt="" />
+        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+      </div>
+      <div class="relative container mx-auto px-6 h-full flex items-center">
+        <div class="text-white">
+          <h1 id="city-name" class="text-5xl md:text-6xl font-bold mb-6"></h1>
+          <p id="city-short-description" class="text-xl max-w-2xl">
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Facts Bar -->
+    <section id="quick-facts" class="bg-white dark:bg-dark-bg-accent shadow-md relative -mt-16 z-10">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
+          <div class="flex items-center space-x-4">
+            <i class="fa-solid fa-calendar-alt text-3xl text-teal-600 dark:text-teal-500"></i>
+            <div>
+              <h3 class="font-semibold dark:text-gray-100">Best Time to Visit</h3>
+              <p id="best-time" class="text-gray-600 dark:text-gray-300"></p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <i class="fa-solid fa-wallet text-3xl text-teal-600 dark:text-teal-500"></i>
+            <div>
+              <h3 class="font-semibold dark:text-gray-100">Average Budget</h3>
+              <p id="budget" class="text-gray-600 dark:text-gray-300"></p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <i class="fa-solid fa-clock text-3xl text-teal-600 dark:text-teal-500"></i>
+            <div>
+              <h3 class="font-semibold dark:text-gray-100">Recommended Stay</h3>
+              <p id="recommended-stay" class="text-gray-600 dark:text-gray-300"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- City Pass Card Section -->
+    <section id="city-pass-card" class="py-12 bg-gradient-to-br from-teal-50 to-white dark:from-dark-bg-alt dark:to-dark-bg relative overflow-hidden">
+      <!-- Decorative elements -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 dark:bg-primary-dark/5 rounded-full -mr-32 -mt-32 blur-2xl"></div>
+      <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 dark:bg-primary-dark/5 rounded-full -ml-48 -mb-48 blur-2xl"></div>
+
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="max-w-5xl mx-auto">
+          <!-- Section Header -->
+          <div class="text-center mb-10">
+            <span class="inline-block px-4 py-1 bg-teal-100 dark:bg-dark-bg-accent text-primary dark:text-primary-dark rounded-full text-sm font-medium mb-4">
+              <i class="fas fa-ticket-alt mr-1"></i> City Card
+            </span>
+            <h2 class="text-3xl font-bold mb-2 dark:text-gray-100">Explore <span id="city-card-name"></span> with a City Card</h2>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Free museums, easy transport, one smart card for your entire visit</p>
+          </div>
+
+          <!-- City Pass Card Content -->
+          <div class="grid md:grid-cols-2 gap-8 items-center">
+            <!-- Left Content: Physical Card Image -->
+            <div class="relative">
+              <div class="city-card-3d-container">
+                <!-- Mobile instruction -->
+                <div class="flip-instruction"></div>
+                <!-- Front of the card -->
+                <div class="city-card-front">
+                  <!-- City Card Image (dynamically set by JavaScript) -->
+                  <img id="city-card-front-image" src="" alt="City Card Front" class="w-full h-full object-contain">
+                </div>
+
+                <!-- Back of the card (shared back) -->
+                <div class="city-card-back">
+                  <img src="../assets/image/back.png" alt="City Card Back" class="w-full h-full object-contain">
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Content: Card Overview -->
+            <div class="p-6 md:p-8 bg-white dark:bg-dark-bg-accent rounded-2xl shadow-xl relative overflow-hidden city-card-content">
+              <!-- Decorative elements -->
+              <div class="absolute top-0 right-0 w-40 h-40 bg-teal-100/30 dark:bg-teal-900/10 rounded-full -mr-20 -mt-20 blur-2xl"></div>
+              <div class="absolute bottom-0 left-0 w-32 h-32 bg-blue-100/20 dark:bg-blue-900/10 rounded-full -ml-16 -mb-16 blur-xl"></div>
+              <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-yellow-100/20 dark:bg-yellow-900/10 rounded-full blur-lg"></div>
+
+              <div class="relative z-10">
+                <!-- Card Header -->
+                <div class="flex items-center mb-8">
+                  <div class="w-14 h-14 bg-gradient-to-br from-teal-100 to-teal-200 dark:from-teal-900/30 dark:to-teal-800/20 rounded-full flex items-center justify-center mr-4 shadow-md transform transition-transform duration-300 hover:scale-110">
+                    <i class="fas fa-ticket-alt text-2xl text-primary dark:text-primary-dark"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold dark:text-gray-100"><span id="city-card-title"></span> City Card</h3>
+                    <p class="text-gray-600 dark:text-gray-400 flex items-center">
+                      <span class="bg-primary/10 dark:bg-primary-dark/10 px-2 py-0.5 rounded-md mr-2">
+                        <span id="city-card-price" class="font-semibold">$45</span>
+                      </span>
+                      for 2 days access
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Key Benefits -->
+                <div class="mb-8">
+                  <h4 class="text-lg font-semibold mb-4 dark:text-gray-100 flex items-center">
+                    <span class="inline-block w-8 h-0.5 bg-primary dark:bg-primary-dark mr-2"></span>
+                    Key Benefits
+                  </h4>
+                  <ul class="space-y-3">
+                    <li class="flex items-center benefit-item">
+                      <div class="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mr-3 shadow-sm">
+                        <i class="fas fa-piggy-bank text-green-600 dark:text-green-400"></i>
+                      </div>
+                      <span class="text-gray-700 dark:text-gray-300">Save up to 60% on attraction tickets</span>
+                    </li>
+                    <li class="flex items-center benefit-item">
+                      <div class="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mr-3 shadow-sm">
+                        <i class="fas fa-bolt text-blue-600 dark:text-blue-400"></i>
+                      </div>
+                      <span class="text-gray-700 dark:text-gray-300">Skip the lines at popular attractions</span>
+                    </li>
+                    <li class="flex items-center benefit-item">
+                      <div class="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mr-3 shadow-sm">
+                        <i class="fas fa-bus text-purple-600 dark:text-purple-400"></i>
+                      </div>
+                      <span class="text-gray-700 dark:text-gray-300">Unlimited public transportation</span>
+                    </li>
+                    <li class="flex items-center benefit-item">
+                      <div class="flex-shrink-0 w-8 h-8 bg-amber-100 dark:bg-amber-900/20 rounded-full flex items-center justify-center mr-3 shadow-sm">
+                        <i class="fas fa-mobile-alt text-amber-600 dark:text-amber-400"></i>
+                      </div>
+                      <span class="text-gray-700 dark:text-gray-300">Digital and physical card options</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Top Attractions Preview -->
+                <div class="mb-8">
+                  <h4 class="text-lg font-semibold mb-4 dark:text-gray-100 flex items-center">
+                    <span class="inline-block w-8 h-0.5 bg-primary dark:bg-primary-dark mr-2"></span>
+                    Top Attractions
+                  </h4>
+                  <div id="city-card-attractions" class="flex flex-wrap gap-2">
+                    <!-- Attractions will be inserted here by JavaScript -->
+                  </div>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="relative">
+                  <div class="absolute inset-0 bg-gradient-to-r from-primary to-primary-dark blur-md opacity-30 rounded-xl transform -rotate-1 scale-105"></div>
+                  <a id="city-card-link" href="" class="city-card-cta relative inline-flex items-center justify-center w-full py-4 px-6 bg-primary hover:bg-primary-dark text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-[-2px] group">
+                    <i class="fas fa-info-circle mr-2 group-hover:animate-pulse"></i>
+                    <span>See Full Details</span>
+                    <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enhanced Pass Selection Section -->
+
+    <!-- Description & Highlights -->
+    <section id="description-highlights" class="py-16 dark:bg-dark-bg">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div>
+            <h2 class="text-3xl font-bold mb-6 dark:text-gray-100">About <span id="about-city-name"></span></h2>
+            <p id="about-description" class="text-gray-600 dark:text-gray-300 mb-6">
+            </p>
+            <div id="highlights-container" class="grid grid-cols-2 gap-6 mt-8">
+              <!-- Highlights will be inserted here -->
+            </div>
+          </div>
+          <div id="gallery-container" class="grid grid-cols-2 gap-4">
+            <!-- Gallery images will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ideal Places to See -->
+    <section id="ideal-places-section" class="py-16 bg-gray-50 dark:bg-dark-bg-alt">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-12 text-center dark:text-gray-100">Ideal Places to See</h2>
+        <div id="ideal-places-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Ideal places will be inserted here -->
+        </div>
+        <div class="text-center mt-12">
+          <button class="bg-teal-600 dark:bg-teal-700 text-white px-8 py-3 rounded-full hover:bg-teal-700 dark:hover:bg-teal-800">
+            Create Custom Itinerary
+          </button>
+        </div>
+      </div>
+    </section>
+<!-- Enhanced Pass Selection Section -->
+    <section id="pass-selection-section" class="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-dark-bg-alt dark:to-dark-bg relative overflow-hidden">
+      <!-- Decorative background elements -->
+      <div class="absolute top-0 left-0 w-96 h-96 bg-primary/5 dark:bg-primary-dark/5 rounded-full -ml-48 -mt-48 blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 w-80 h-80 bg-secondary/5 dark:bg-secondary-dark/5 rounded-full -mr-40 -mb-40 blur-3xl"></div>
+
+      <div class="container mx-auto px-4 relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+          <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 dark:bg-primary-dark/20 text-primary dark:text-primary-dark text-sm font-medium mb-4">
+            <i class="fas fa-ticket-alt mr-2"></i>
+            My Urban Pass Options
+          </span>
+          <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+            Choose Your <span class="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Perfect Pass</span>
+          </h2>
+          <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            Select the pass type that best fits your travel style. Each pass is designed for different travel experiences in <span id="pass-city-name"></span>.
+          </p>
+        </div>
+
+        <!-- Pass Type Selection Cards -->
+        <div id="pass-type-selection" class="mb-12">
+          <div id="pass-type-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+
+            <!-- Urban City Pass Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border-2 border-transparent hover:border-[#69c8c8] transition-all duration-300">
+              <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-[#69c8c8]/10 dark:bg-[#69c8c8]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fas fa-city text-2xl text-[#69c8c8]"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">Urban City Pass</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Complete city exploration with museums, transport, and attractions</p>
+                <div class="text-3xl font-bold text-[#69c8c8]">€25</div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Starting price</p>
+              </div>
+
+              <div class="space-y-3 mb-6">
+                <div class="flex items-center">
+                  <i class="fas fa-piggy-bank text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Save up to 60%</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-bolt text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Skip the lines</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-bus text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Free transport</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-mobile-alt text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Digital & physical</span>
+                </div>
+              </div>
+
+              <button onclick="navigateToCityPass()" class="w-full bg-[#69c8c8] hover:bg-[#4bb3b3] text-white py-3 rounded-lg font-semibold transition-colors">
+                See More
+              </button>
+            </div>
+
+            <!-- Urban Air Pass Card -->
+            <div id="air-pass-card" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border-2 border-transparent hover:border-[#69c8c8] transition-all duration-300" style="display: none;">
+              <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-[#69c8c8]/10 dark:bg-[#69c8c8]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fas fa-plane text-2xl text-[#69c8c8]"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">Urban Air Pass</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Perfect for layovers and short airport visits</p>
+                <div class="text-3xl font-bold text-[#69c8c8]">€35</div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Starting price</p>
+              </div>
+
+              <div class="space-y-3 mb-6">
+                <div class="flex items-center">
+                  <i class="fas fa-clock text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Time optimized</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-shuttle-van text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Airport transfer</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-suitcase text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Luggage storage</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-route text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Guided route</span>
+                </div>
+              </div>
+
+              <button onclick="navigateToAirPass()" class="w-full bg-[#69c8c8] hover:bg-[#4bb3b3] text-white py-3 rounded-lg font-semibold transition-colors">
+                See More
+              </button>
+            </div>
+
+            <!-- Urban Sea Pass Card -->
+            <div id="sea-pass-card" class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border-2 border-transparent hover:border-[#69c8c8] transition-all duration-300" style="display: none;">
+              <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-[#69c8c8]/10 dark:bg-[#69c8c8]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fas fa-ship text-2xl text-[#69c8c8]"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">Urban Sea Pass</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">Shore excursions for cruise passengers</p>
+                <div class="text-3xl font-bold text-[#69c8c8]">€30</div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Starting price</p>
+              </div>
+
+              <div class="space-y-3 mb-6">
+                <div class="flex items-center">
+                  <i class="fas fa-anchor text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Port transfers</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-water text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Coastal focus</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-fish text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Seafood discounts</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-clock text-[#69c8c8] mr-3"></i>
+                  <span class="text-gray-700 dark:text-gray-300">Flexible timing</span>
+                </div>
+              </div>
+
+              <button onclick="navigateToSeaPass()" class="w-full bg-[#69c8c8] hover:bg-[#4bb3b3] text-white py-3 rounded-lg font-semibold transition-colors">
+                See More
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video Section -->
+    <section id="video-section" class="py-16 dark:bg-dark-bg">
+      <div class="container mx-auto px-6">
+        <div class="relative rounded-xl overflow-hidden">
+          <iframe id="city-video" class="w-full h-[600px] object-cover" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Map -->
+    <section id="map-section" class="py-16 bg-gray-50 dark:bg-dark-bg-alt">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold mb-12 dark:text-gray-100">Explore <span id="map-city-name"></span></h2>
+        <div class="bg-white dark:bg-dark-bg-accent rounded-xl shadow-lg p-4 h-[500px]">
+          <iframe id="city-map" src="" class="w-full h-full rounded-lg" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Guide Section -->
+    <section id="guide-section" class="py-16 dark:bg-dark-bg">
+      <div class="container mx-auto px-6">
+        <div class="bg-teal-50 dark:bg-dark-bg-accent/50 rounded-xl p-8 md:p-12">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 class="text-3xl font-bold mb-6 dark:text-gray-100">Connect with Local Experts</h2>
+              <p class="text-gray-600 dark:text-gray-300 mb-8">
+                Get insider knowledge and personalized recommendations from our experienced local guides who know <span id="guide-city-name"></span> inside out.
+              </p>
+              <button class="bg-teal-600 dark:bg-teal-700 text-white px-8 py-3 rounded-full hover:bg-teal-700 dark:hover:bg-teal-800">
+                <a href="./guides.html">Browse Local Guides</a>
+              </button>
+            </div>
+            <div id="guides-container" class="grid grid-cols-2 gap-4">
+              <!-- Guide cards will be inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer Placeholder -->
+  <footer id="footer-placeholder" class="bg-white dark:bg-dark-bg border-t border-gray-200 dark:border-dark-border">
+    <!-- Footer will be loaded here -->
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/pages/city.js"></script>
+</body>
+</html>

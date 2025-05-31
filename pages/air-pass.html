@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Air Pass - My Urban Pass</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/city.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="../images/Logos/main.png">
+  
+  <style>
+    /* CSS Variables for theming - Air Pass Theme */
+    :root {
+      --color-primary: #69c8c8;
+      --color-primary-hover: #4bb3b3;
+      --color-secondary: #3F20FB;
+      --color-accent: #DC2626; /* Red accent for air theme */
+      --color-accent-hover: #B91C1C;
+      --color-accent-text: #ffffff; /* White text for air theme */
+      --color-accent-light: #FEE2E2;
+      --color-text: #1f2937;
+      --color-text-inverse: #ffffff;
+      --color-text-muted: #6b7280;
+      --color-bg: #ffffff;
+      --color-bg-alt: #f9fafb;
+      --color-bg-accent: #f3f4f6;
+      --color-border: #e5e7eb;
+    }
+
+    .dark {
+      --color-primary: #69c8c8;
+      --color-primary-hover: #4bb3b3;
+      --color-secondary: #4f46e5;
+      --color-accent: #EF4444;
+      --color-accent-hover: #DC2626;
+      --color-accent-text: #ffffff;
+      --color-accent-light: #7F1D1D;
+      --color-text: #f3f4f6;
+      --color-text-inverse: #ffffff;
+      --color-text-muted: #9ca3af;
+      --color-bg: #1f2937;
+      --color-bg-alt: #111827;
+      --color-bg-accent: #2d3748;
+      --color-border: #374151;
+    }
+
+    /* Page transitions */
+    .page-transition {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .page-transition.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Breadcrumb styling */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb .separator {
+      color: var(--color-text-muted);
+    }
+
+    /* Air Pass specific styling */
+    .air-hero-bg {
+      background: linear-gradient(135deg, var(--color-accent)/10 0%, var(--color-primary)/10 50%, #1e40af/10 100%);
+    }
+
+    .air-card {
+      background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+      border: 2px solid transparent;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .air-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-accent) 0%, #1e40af 100%);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .air-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .air-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15), 0 10px 20px rgba(30, 64, 175, 0.1);
+      border-color: var(--color-accent);
+    }
+
+    .dark .air-card {
+      background: linear-gradient(145deg, #2d3748 0%, #1a202c 100%);
+    }
+
+    .air-feature-icon {
+      background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
+      color: var(--color-accent-text);
+    }
+
+    .air-logo {
+      filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.3));
+      transition: transform 0.3s ease;
+    }
+
+    .air-logo:hover {
+      transform: scale(1.05) rotate(5deg);
+    }
+
+    /* Animated gradient text */
+    .air-gradient-text {
+      background: linear-gradient(45deg, var(--color-accent), #1e40af, var(--color-primary));
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Flying animation for benefits */
+    .flying {
+      animation: flying 4s ease-in-out infinite;
+    }
+
+    @keyframes flying {
+      0%, 100% { transform: translateY(0px) translateX(0px); }
+      25% { transform: translateY(-15px) translateX(5px); }
+      50% { transform: translateY(-5px) translateX(-5px); }
+      75% { transform: translateY(-10px) translateX(3px); }
+    }
+
+    /* Pulse animation for CTA */
+    .pulse-air {
+      animation: pulseAir 2s infinite;
+    }
+
+    @keyframes pulseAir {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      50% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+    }
+
+    /* Plane trail effect */
+    .plane-trail {
+      position: relative;
+    }
+
+    .plane-trail::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: 50px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-accent) 0%, transparent 100%);
+      transform: translateY(-50%);
+      animation: trail 2s ease-in-out infinite;
+    }
+
+    @keyframes trail {
+      0%, 100% { opacity: 0; width: 0px; }
+      50% { opacity: 1; width: 50px; }
+    }
+  </style>
+</head>
+
+<body class="bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-300">
+  <!-- Header Placeholder -->
+  <header id="header-placeholder" class="bg-white dark:bg-dark-bg border-b border-gray-200 dark:border-dark-border">
+    <!-- Header will be loaded here -->
+  </header>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="bg-[var(--color-bg)] border-b border-[var(--color-border)] py-3">
+    <div class="container mx-auto px-4">
+      <div id="breadcrumb" class="breadcrumb">
+        <a href="../index.html">Home</a>
+        <span class="separator">></span>
+        <a href="./destinations.html">Cities</a>
+        <span class="separator">></span>
+        <a href="#" id="city-link">City</a>
+        <span class="separator">></span>
+        <span class="text-[var(--color-text)]">Urban Air Pass</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="loading-state" class="flex justify-center items-center h-screen">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-[var(--color-primary)]"></div>
+  </div>
+
+  <!-- Main Content -->
+  <main id="pass-content" class="hidden page-transition">
+    <!-- Hero Section -->
+    <section class="relative py-24 air-hero-bg overflow-hidden">
+      <!-- Decorative elements -->
+      <div class="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-red-500/20 to-blue-600/20 rounded-full -ml-48 -mt-48 blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 w-80 h-80 bg-gradient-to-tl from-blue-700/20 to-red-600/20 rounded-full -mr-40 -mb-40 blur-3xl"></div>
+
+      <!-- Floating clouds -->
+      <div class="absolute top-20 left-1/4 w-16 h-8 bg-white/30 rounded-full blur-sm flying" style="animation-delay: 0s;"></div>
+      <div class="absolute top-32 right-1/3 w-12 h-6 bg-white/20 rounded-full blur-sm flying" style="animation-delay: 1s;"></div>
+      <div class="absolute bottom-40 left-1/3 w-20 h-10 bg-white/25 rounded-full blur-sm flying" style="animation-delay: 2s;"></div>
+
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-5xl mx-auto text-center">
+          <!-- Logo and Icon -->
+          <div class="flex justify-center items-center mb-8">
+            <div class="relative">
+              <img src="../images/Logos/air_pass.png" alt="Air Pass Logo" class="w-24 h-24 air-logo">
+              <div class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center plane-trail">
+                <i class="fas fa-plane text-white text-sm"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h1 class="text-5xl md:text-7xl font-bold mb-6">
+            <span class="air-gradient-text">Urban Air Pass</span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="text-2xl text-[var(--color-text-muted)] mb-8 max-w-3xl mx-auto leading-relaxed">
+            Perfect for layovers and short airport visits in
+            <span class="font-semibold text-[var(--color-accent)]" id="city-name"></span>
+          </p>
+
+          <!-- Benefits Grid -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto">
+            <div class="flying bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-lg border border-red-200/50">
+              <div class="air-feature-icon w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2">
+                <i class="fas fa-clock text-sm"></i>
+              </div>
+              <span class="text-sm font-semibold text-[var(--color-text)]">Time optimized</span>
+            </div>
+            <div class="flying bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-lg border border-red-200/50" style="animation-delay: 0.5s;">
+              <div class="air-feature-icon w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2">
+                <i class="fas fa-shuttle-van text-sm"></i>
+              </div>
+              <span class="text-sm font-semibold text-[var(--color-text)]">Airport transfer</span>
+            </div>
+            <div class="flying bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-lg border border-red-200/50" style="animation-delay: 1s;">
+              <div class="air-feature-icon w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2">
+                <i class="fas fa-suitcase text-sm"></i>
+              </div>
+              <span class="text-sm font-semibold text-[var(--color-text)]">Luggage storage</span>
+            </div>
+            <div class="flying bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-lg border border-red-200/50" style="animation-delay: 1.5s;">
+              <div class="air-feature-icon w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2">
+                <i class="fas fa-route text-sm"></i>
+              </div>
+              <span class="text-sm font-semibold text-[var(--color-text)]">Guided route</span>
+            </div>
+          </div>
+
+          <!-- Pricing -->
+          <div class="text-center">
+            <span class="text-lg text-[var(--color-text-muted)] block mb-2">Starting from</span>
+            <div class="text-6xl font-bold air-gradient-text mb-4">€35</div>
+            <p class="text-[var(--color-text-muted)]">Perfect for your layover adventure</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Duration Selection -->
+    <section class="py-20 bg-gradient-to-br from-red-50/30 to-blue-50/30 dark:from-gray-900 dark:to-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="text-center mb-16">
+            <span class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-red-100 to-blue-100 dark:from-red-900/30 dark:to-blue-900/30 text-[var(--color-accent)] text-sm font-medium mb-4">
+              <i class="fas fa-plane mr-2"></i>
+              Flight Duration Options
+            </span>
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-4">
+              Choose Your <span class="air-gradient-text">Flight Time</span>
+            </h2>
+            <p class="text-xl text-[var(--color-text-muted)] max-w-2xl mx-auto">
+              Select the perfect duration for your layover or short visit
+            </p>
+          </div>
+
+          <!-- Duration Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <!-- 6 Hours -->
+            <div class="air-card rounded-2xl p-8 cursor-pointer group" onclick="selectDuration('6h', 35)">
+              <div class="text-center">
+                <div class="w-16 h-16 air-feature-icon rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 plane-trail">
+                  <i class="fas fa-clock text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-[var(--color-text)]">6 Hours</h3>
+                <div class="text-4xl font-bold air-gradient-text mb-4">€35</div>
+                <p class="text-[var(--color-text-muted)] mb-6 text-sm">Quick layover exploration</p>
+                <button class="w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] hover:from-[var(--color-accent-hover)] hover:to-[var(--color-accent)] text-[var(--color-accent-text)] py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 pulse-air">
+                  Take Flight
+                </button>
+              </div>
+            </div>
+
+            <!-- 12 Hours - Popular -->
+            <div class="air-card rounded-2xl p-8 cursor-pointer group relative" onclick="selectDuration('12h', 55)">
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span class="bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-4 py-1 rounded-full text-sm font-bold">
+                  Most Popular
+                </span>
+              </div>
+              <div class="text-center">
+                <div class="w-16 h-16 air-feature-icon rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 plane-trail">
+                  <i class="fas fa-plane-departure text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-[var(--color-text)]">12 Hours</h3>
+                <div class="text-4xl font-bold air-gradient-text mb-4">€55</div>
+                <p class="text-[var(--color-text-muted)] mb-6 text-sm">Extended layover adventure</p>
+                <button class="w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] hover:from-[var(--color-accent-hover)] hover:to-[var(--color-accent)] text-[var(--color-accent-text)] py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 pulse-air">
+                  Take Flight
+                </button>
+              </div>
+            </div>
+
+            <!-- 24 Hours -->
+            <div class="air-card rounded-2xl p-8 cursor-pointer group" onclick="selectDuration('24h', 75)">
+              <div class="text-center">
+                <div class="w-16 h-16 air-feature-icon rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 plane-trail">
+                  <i class="fas fa-plane-arrival text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-[var(--color-text)]">24 Hours</h3>
+                <div class="text-4xl font-bold air-gradient-text mb-4">€75</div>
+                <p class="text-[var(--color-text-muted)] mb-6 text-sm">Full day city experience</p>
+                <button class="w-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] hover:from-[var(--color-accent-hover)] hover:to-[var(--color-accent)] text-[var(--color-accent-text)] py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 pulse-air">
+                  Take Flight
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Layover Experience Section -->
+    <section class="py-20 bg-gradient-to-br from-red-50/30 to-blue-50/30 dark:from-gray-900 dark:to-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="text-center mb-16">
+            <span class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-red-100 to-blue-100 dark:from-red-900/30 dark:to-blue-900/30 text-[var(--color-accent)] text-sm font-medium mb-4">
+              <i class="fas fa-clock mr-2"></i>
+              Perfect Layover Experience
+            </span>
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-6">
+              Make Your <span class="air-gradient-text">Layover Memorable</span> in <span id="layover-city-name"></span>
+            </h2>
+            <p class="text-xl text-[var(--color-text-muted)] max-w-3xl mx-auto">
+              Transform your airport layover into an exciting mini-adventure. Discover the city's highlights without the stress of missing your flight.
+            </p>
+          </div>
+
+          <!-- Layover Benefits -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            <div class="air-card rounded-2xl p-8 text-center group">
+              <div class="air-feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-shuttle-van text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-[var(--color-text)] mb-4">Airport Transfers Included</h3>
+              <p class="text-[var(--color-text-muted)]">Seamless pickup and drop-off at the airport. No need to worry about transportation logistics.</p>
+            </div>
+
+            <div class="air-card rounded-2xl p-8 text-center group">
+              <div class="air-feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-suitcase text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-[var(--color-text)] mb-4">Luggage Storage Service</h3>
+              <p class="text-[var(--color-text-muted)]">Secure luggage storage so you can explore hands-free and comfortable during your layover.</p>
+            </div>
+
+            <div class="air-card rounded-2xl p-8 text-center group">
+              <div class="air-feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-route text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-[var(--color-text)] mb-4">Optimized Itinerary</h3>
+              <p class="text-[var(--color-text-muted)]">Carefully planned routes to maximize your time and ensure you return to the airport with time to spare.</p>
+            </div>
+
+            <div class="air-card rounded-2xl p-8 text-center group">
+              <div class="air-feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-bolt text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-[var(--color-text)] mb-4">Skip-the-Line Access</h3>
+              <p class="text-[var(--color-text-muted)]">Fast-track entry to attractions to make the most of your limited time in the city.</p>
+            </div>
+
+            <div class="air-card rounded-2xl p-8 text-center group">
+              <div class="air-feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-mobile-alt text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-[var(--color-text)] mb-4">Real-time Updates</h3>
+              <p class="text-[var(--color-text-muted)]">Live flight tracking and notifications to ensure you never miss your connecting flight.</p>
+            </div>
+
+            <div class="air-card rounded-2xl p-8 text-center group">
+              <div class="air-feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-headset text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-[var(--color-text)] mb-4">24/7 Support</h3>
+              <p class="text-[var(--color-text-muted)]">Dedicated support team available throughout your layover experience for peace of mind.</p>
+            </div>
+          </div>
+
+          <!-- Call to Action -->
+          <div class="text-center">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 max-w-2xl mx-auto border border-red-200/50">
+              <h3 class="text-2xl font-bold mb-4 air-gradient-text">Turn Your Layover Into an Adventure!</h3>
+              <p class="text-[var(--color-text-muted)] mb-6">Don't waste hours at the airport. Explore the city and create unforgettable memories during your layover.</p>
+              <button onclick="scrollToDurations()" class="bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-hover)] hover:from-[var(--color-accent-hover)] hover:to-[var(--color-accent)] text-[var(--color-accent-text)] px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 pulse-air">
+                Choose Your Flight Duration
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <footer id="footer-placeholder" class="bg-white dark:bg-dark-bg border-t border-gray-200 dark:border-dark-border">
+    <!-- Footer will be loaded here -->
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/pages/air-pass.js"></script>
+</body>
+</html>

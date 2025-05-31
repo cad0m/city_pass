@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Pass - My Urban Pass</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/city.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="../images/Logos/main.png">
+  
+  <style>
+    /* CSS Variables for theming */
+    :root {
+      --color-primary: #69c8c8;
+      --color-primary-hover: #4bb3b3;
+      --color-secondary: #3F20FB;
+      --color-success: #10B981;
+      --color-success-hover: #059669;
+      --color-text: #1f2937;
+      --color-text-inverse: #ffffff;
+      --color-text-muted: #6b7280;
+      --color-bg: #ffffff;
+      --color-bg-alt: #f9fafb;
+      --color-bg-accent: #f3f4f6;
+      --color-border: #e5e7eb;
+    }
+
+    .dark {
+      --color-primary: #69c8c8;
+      --color-primary-hover: #4bb3b3;
+      --color-secondary: #4f46e5;
+      --color-success: #10B981;
+      --color-success-hover: #059669;
+      --color-text: #f3f4f6;
+      --color-text-inverse: #ffffff;
+      --color-text-muted: #9ca3af;
+      --color-bg: #1f2937;
+      --color-bg-alt: #111827;
+      --color-bg-accent: #2d3748;
+      --color-border: #374151;
+    }
+
+    /* Page transitions */
+    .page-transition {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .page-transition.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Form styling */
+    .form-input {
+      background: var(--color-bg);
+      border: 2px solid var(--color-border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      color: var(--color-text);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(105, 200, 200, 0.1);
+    }
+
+    .form-label {
+      color: var(--color-text);
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* Purchase card styling */
+    .purchase-card {
+      background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+      border: 2px solid var(--color-border);
+      border-radius: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .dark .purchase-card {
+      background: linear-gradient(145deg, #2d3748 0%, #1a202c 100%);
+    }
+
+    .purchase-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: 0 10px 30px rgba(105, 200, 200, 0.1);
+    }
+
+    /* Security badges */
+    .security-badge {
+      background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-hover) 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Progress steps */
+    .step {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--color-border);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .step.active .step-number {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .step.completed .step-number {
+      background: var(--color-success);
+      color: white;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--color-border);
+      margin: 0 16px;
+    }
+
+    .step.completed .step-line {
+      background: var(--color-success);
+    }
+
+    /* Breadcrumb styling */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--color-primary);
+    }
+
+    .breadcrumb .separator {
+      color: var(--color-text-muted);
+    }
+  </style>
+</head>
+
+<body class="bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-300">
+  <!-- Header Placeholder -->
+  <header id="header-placeholder" class="bg-white dark:bg-dark-bg border-b border-gray-200 dark:border-dark-border">
+    <!-- Header will be loaded here -->
+  </header>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="bg-[var(--color-bg)] border-b border-[var(--color-border)] py-3">
+    <div class="container mx-auto px-4">
+      <div id="breadcrumb" class="breadcrumb">
+        <a href="../index.html">Home</a>
+        <span class="separator">></span>
+        <a href="./destinations.html">Cities</a>
+        <span class="separator">></span>
+        <a href="#" id="city-link">City</a>
+        <span class="separator">></span>
+        <a href="#" id="pass-link">Pass</a>
+        <span class="separator">></span>
+        <span class="text-[var(--color-text)]">Purchase</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="loading-state" class="flex justify-center items-center h-screen">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-[var(--color-primary)]"></div>
+  </div>
+
+  <!-- Main Content -->
+  <main id="purchase-content" class="hidden page-transition">
+    <!-- Progress Steps -->
+    <section class="py-8 bg-[var(--color-bg-alt)]">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center justify-between">
+            <div class="step active">
+              <div class="step-number">1</div>
+              <span class="ml-3 font-medium">Order Summary</span>
+              <div class="step-line"></div>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <span class="ml-3 font-medium">Customer Info</span>
+              <div class="step-line"></div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <span class="ml-3 font-medium">Payment</span>
+              <div class="step-line"></div>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <span class="ml-3 font-medium">Confirmation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Purchase Form -->
+    <section class="py-16">
+      <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+              <div class="purchase-card p-8 sticky top-8">
+                <h3 class="text-2xl font-bold mb-6 text-[var(--color-text)]">Order Summary</h3>
+                
+                <!-- Pass Details -->
+                <div id="pass-summary" class="space-y-4 mb-6">
+                  <!-- Will be populated by JavaScript -->
+                </div>
+                
+                <!-- Price Breakdown -->
+                <div class="border-t border-[var(--color-border)] pt-6">
+                  <div class="space-y-3">
+                    <div class="flex justify-between">
+                      <span class="text-[var(--color-text-muted)]">Pass Price</span>
+                      <span id="pass-price" class="font-semibold">€0</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-[var(--color-text-muted)]">Service Fee</span>
+                      <span class="font-semibold">€2.50</span>
+                    </div>
+                    <div class="border-t border-[var(--color-border)] pt-3">
+                      <div class="flex justify-between text-xl font-bold">
+                        <span>Total</span>
+                        <span id="total-price" class="text-[var(--color-primary)]">€0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Security Badges -->
+                <div class="mt-6 space-y-3">
+                  <div class="security-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Payment</span>
+                  </div>
+                  <div class="security-badge">
+                    <i class="fas fa-undo"></i>
+                    <span>Free Cancellation</span>
+                  </div>
+                  <div class="security-badge">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Instant Delivery</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Purchase Form -->
+            <div class="lg:col-span-2">
+              <form id="purchase-form" class="space-y-8">
+                
+                <!-- Customer Information -->
+                <div class="purchase-card p-8">
+                  <h3 class="text-2xl font-bold mb-6 text-[var(--color-text)]">Customer Information</h3>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="form-label">First Name *</label>
+                      <input type="text" name="firstName" required class="form-input w-full" placeholder="Enter your first name">
+                    </div>
+                    <div>
+                      <label class="form-label">Last Name *</label>
+                      <input type="text" name="lastName" required class="form-input w-full" placeholder="Enter your last name">
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="form-label">Email Address *</label>
+                      <input type="email" name="email" required class="form-input w-full" placeholder="Enter your email address">
+                    </div>
+                    <div>
+                      <label class="form-label">Phone Number</label>
+                      <input type="tel" name="phone" class="form-input w-full" placeholder="Enter your phone number">
+                    </div>
+                    <div>
+                      <label class="form-label">Country *</label>
+                      <select name="country" required class="form-input w-full">
+                        <option value="">Select your country</option>
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="FR">France</option>
+                        <option value="DE">Germany</option>
+                        <option value="ES">Spain</option>
+                        <option value="IT">Italy</option>
+                        <option value="MA">Morocco</option>
+                        <!-- Add more countries as needed -->
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Payment Information -->
+                <div class="purchase-card p-8">
+                  <h3 class="text-2xl font-bold mb-6 text-[var(--color-text)]">Payment Information</h3>
+                  
+                  <div class="space-y-6">
+                    <div>
+                      <label class="form-label">Card Number *</label>
+                      <input type="text" name="cardNumber" required class="form-input w-full" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    <div class="grid grid-cols-2 gap-6">
+                      <div>
+                        <label class="form-label">Expiry Date *</label>
+                        <input type="text" name="expiryDate" required class="form-input w-full" placeholder="MM/YY" maxlength="5">
+                      </div>
+                      <div>
+                        <label class="form-label">CVV *</label>
+                        <input type="text" name="cvv" required class="form-input w-full" placeholder="123" maxlength="4">
+                      </div>
+                    </div>
+                    <div>
+                      <label class="form-label">Cardholder Name *</label>
+                      <input type="text" name="cardholderName" required class="form-input w-full" placeholder="Name as it appears on card">
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Terms and Submit -->
+                <div class="purchase-card p-8">
+                  <div class="space-y-6">
+                    <div class="flex items-start">
+                      <input type="checkbox" id="terms" name="terms" required class="mt-1 mr-3">
+                      <label for="terms" class="text-sm text-[var(--color-text-muted)]">
+                        I agree to the <a href="#" class="text-[var(--color-primary)] hover:underline">Terms of Service</a> and 
+                        <a href="#" class="text-[var(--color-primary)] hover:underline">Privacy Policy</a>
+                      </label>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-hover)] hover:from-[var(--color-primary-hover)] hover:to-[var(--color-primary)] text-white py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105">
+                      Complete Purchase
+                    </button>
+                    
+                    <p class="text-center text-sm text-[var(--color-text-muted)]">
+                      Your pass will be delivered instantly to your email after payment confirmation.
+                    </p>
+                  </div>
+                </div>
+                
+              </form>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <footer id="footer-placeholder" class="bg-white dark:bg-dark-bg border-t border-gray-200 dark:border-dark-border">
+    <!-- Footer will be loaded here -->
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/pages/purchase.js"></script>
+</body>
+</html>

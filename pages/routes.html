@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Urban Pass - Smart Tourism for Morocco</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#69c8c8',
+                            dark: '#4bb3b3',
+                            hover: '#4bb3b3'
+                        },
+                        secondary: {
+                            DEFAULT: '#3F20FB',
+                            dark: '#4f46e5'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --color-primary: #69c8c8;
+            --color-primary-hover: #4bb3b3;
+            --color-secondary: #3F20FB;
+            --color-text: #1f2937;
+            --color-text-inverse: #ffffff;
+            --color-text-muted: #6b7280;
+            --color-bg: #ffffff;
+            --color-bg-alt: #f9fafb;
+            --color-bg-accent: #f3f4f6;
+            --color-border: #e5e7eb;
+        }
+
+        .dark {
+            --color-primary: #69c8c8;
+            --color-primary-hover: #4bb3b3;
+            --color-secondary: #4f46e5;
+            --color-text: #f3f4f6;
+            --color-text-inverse: #ffffff;
+            --color-text-muted: #9ca3af;
+            --color-bg: #1f2937;
+            --color-bg-alt: #111827;
+            --color-bg-accent: #2d3748;
+            --color-border: #374151;
+        }
+
+        * {
+            font-family: "Inter", sans-serif;
+        }
+
+        /* Scroll progress bar */
+        .scroll-progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+        }
+
+        .scroll-progress-bar {
+            height: 100%;
+            background: var(--color-primary);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Page transitions */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading states */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* City card hover effects */
+        .city-card {
+            transition: all 0.3s ease;
+        }
+
+        .city-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* Pass type cards */
+        .pass-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .pass-card:hover {
+            transform: scale(1.02);
+        }
+
+        .pass-card.selected {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(105, 200, 200, 0.2);
+        }
+
+        /* Mobile menu */
+        #mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Breadcrumb styling */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--color-primary);
+        }
+
+        .breadcrumb .separator {
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-bar" id="scroll-progress"></div>
+    </div>
+
+    <!-- Header -->
+    <header id="header" class="fixed w-full bg-[var(--color-bg)] border-b border-[var(--color-border)] z-50">
+        <nav class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" onclick="navigateTo('/')" class="flex items-center group">
+                <span class="text-2xl font-bold text-[var(--color-primary)]">My Urban Pass</span>
+            </a>
+
+            <!-- Breadcrumb Navigation -->
+            <div id="breadcrumb" class="hidden md:flex breadcrumb"></div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" onclick="navigateTo('/')" class="text-[var(--color-text)] hover:text-[var(--color-primary)] transition-colors">Home</a>
+                <a href="#" class="text-[var(--color-text)] hover:text-[var(--color-primary)] transition-colors">How It Works</a>
+                
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-[var(--color-bg-alt)] transition-colors" onclick="toggleTheme()">
+                    <i class="fas fa-moon moon-icon"></i>
+                    <i class="fas fa-sun sun-icon hidden"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-[var(--color-text)]" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-y-0 left-0 w-64 bg-[var(--color-bg)] border-r border-[var(--color-border)] z-40 md:hidden">
+        <div class="p-4">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-xl font-bold text-[var(--color-primary)]">My Urban Pass</span>
+                <button onclick="toggleMobileMenu()" class="p-2 rounded-md">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="space-y-4">
+                <a href="#" onclick="navigateTo('/')" class="block py-2 text-[var(--color-text)] hover:text-[var(--color-primary)]">Home</a>
+                <a href="#" class="block py-2 text-[var(--color-text)] hover:text-[var(--color-primary)]">How It Works</a>
+                <button onclick="toggleTheme()" class="flex items-center py-2 text-[var(--color-text)]">
+                    <i class="fas fa-moon moon-icon mr-2"></i>
+                    <i class="fas fa-sun sun-icon mr-2 hidden"></i>
+                    <span>Toggle Theme</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="pt-20 min-h-screen">
+        <!-- Content will be dynamically loaded here -->
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer" class="bg-gray-900 text-white py-20">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <span class="text-2xl font-bold text-teal-400">My Urban Pass</span>
+                    <p class="mt-4 text-gray-400">Your trusted companion for authentic Moroccan travel experiences.</p>
+                    <div class="flex space-x-4 mt-6">
+                        <i class="text-xl cursor-pointer hover:text-teal-400 fab fa-facebook"></i>
+                        <i class="text-xl cursor-pointer hover:text-teal-400 fab fa-instagram"></i>
+                        <i class="text-xl cursor-pointer hover:text-teal-400 fab fa-twitter"></i>
+                        <i class="text-xl cursor-pointer hover:text-teal-400 fab fa-youtube"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white cursor-pointer">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white cursor-pointer">How It Works</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white cursor-pointer">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Destinations</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" onclick="navigateTo('/city/marrakech')" class="text-gray-400 hover:text-white cursor-pointer">Marrakech</a></li>
+                        <li><a href="#" onclick="navigateTo('/city/casablanca')" class="text-gray-400 hover:text-white cursor-pointer">Casablanca</a></li>
+                        <li><a href="#" onclick="navigateTo('/city/fes')" class="text-gray-400 hover:text-white cursor-pointer">Fes</a></li>
+                        <li><a href="#" onclick="navigateTo('/city/tangier')" class="text-gray-400 hover:text-white cursor-pointer">Tangier</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white cursor-pointer">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white cursor-pointer">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white cursor-pointer">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">© 2025 My Urban Pass. All rights reserved.</p>
+                <p class="text-gray-400 flex items-center">
+                    Made with <i class="text-teal-400 mx-2 fas fa-heart"></i> in Morocco
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Application State
+        const AppState = {
+            currentRoute: '/',
+            currentCity: null,
+            currentPass: null,
+            selectedDuration: null,
+            theme: localStorage.getItem('theme') || 'light'
+        };
+
+        // City and Pass Data
+        const cityData = {
+            casablanca: {
+                name: "Casablanca",
+                availablePasses: ['city', 'air', 'sea'],
+                airport: "Mohammed V International",
+                port: "Port of Casablanca",
+                landmarks: ["Hassan II Mosque", "Old Medina", "Corniche"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "Morocco's economic capital, where modernity meets tradition along the Atlantic coast.",
+                bestTime: "March - May, September - November",
+                budget: "$50-80/day",
+                recommendedStay: "2-3 days"
+            },
+            marrakech: {
+                name: "Marrakech",
+                availablePasses: ['city', 'air'],
+                airport: "Marrakech Menara Airport",
+                landmarks: ["Jemaa el-Fnaa", "Majorelle Garden", "Koutoubia Mosque"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "The Red City, a vibrant imperial city with bustling souks and stunning palaces.",
+                bestTime: "October - April",
+                budget: "$40-70/day",
+                recommendedStay: "3-4 days"
+            },
+            fes: {
+                name: "Fes",
+                availablePasses: ['city'],
+                landmarks: ["Fes el-Bali", "Al-Qarawiyyin Mosque", "Bou Inania Madrasa"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "The spiritual and cultural heart of Morocco, home to the world's oldest university.",
+                bestTime: "March - May, September - November",
+                budget: "$35-60/day",
+                recommendedStay: "2-3 days"
+            },
+            tangier: {
+                name: "Tangier",
+                availablePasses: ['city', 'sea'],
+                port: "Port of Tangier",
+                landmarks: ["Kasbah", "Caves of Hercules", "Cap Spartel"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "Gateway between Africa and Europe, a cosmopolitan city with rich history.",
+                bestTime: "April - June, September - October",
+                budget: "$45-75/day",
+                recommendedStay: "2-3 days"
+            },
+            rabat: {
+                name: "Rabat",
+                availablePasses: ['city'],
+                landmarks: ["Hassan Tower", "Kasbah of the Udayas", "Royal Palace"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "Morocco's capital, a blend of historical heritage and modern governance.",
+                bestTime: "March - May, September - November",
+                budget: "$40-65/day",
+                recommendedStay: "1-2 days"
+            },
+            agadir: {
+                name: "Agadir",
+                availablePasses: ['city', 'sea'],
+                port: "Port of Agadir",
+                landmarks: ["Agadir Beach", "Kasbah", "Souk El Had"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "Modern beach resort city with golden sands and year-round sunshine.",
+                bestTime: "Year-round",
+                budget: "$50-85/day",
+                recommendedStay: "3-5 days"
+            },
+            essaouira: {
+                name: "Essaouira",
+                availablePasses: ['city', 'sea'],
+                port: "Port of Essaouira",
+                landmarks: ["Medina", "Skala de la Ville", "Essaouira Beach"],
+                heroImage: "/placeholder.svg?height=600&width=1200",
+                description: "Charming coastal city known for its Portuguese-influenced architecture and windsurfing.",
+                bestTime: "April - October",
+                budget: "$40-70/day",
+                recommendedStay: "2-3 days"
+            }
+        };
+
+        const passData = {
+            city: {
+                title: "Urban City Pass",
+                subtitle: "Complete city exploration with museums, transport, and attractions",
+                icon: "fas fa-city",
+                durations: ["24h", "48h", "72h", "1 Week"],
+                pricing: { "24h": 25, "48h": 45, "72h": 65, "1 Week": 95 },
+                features: [
+                    "Free entry to 20+ museums and attractions",
+                    "Unlimited public transportation",
+                    "Skip-the-line access",
+                    "Free walking tour",
+                    "Discounts at restaurants and shops",
+                    "Digital guidebook included"
+                ],
+                benefits: [
+                    { icon: "fas fa-piggy-bank", text: "Save up to 60%" },
+                    { icon: "fas fa-bolt", text: "Skip the lines" },
+                    { icon: "fas fa-bus", text: "Free transport" },
+                    { icon: "fas fa-mobile-alt", text: "Digital & physical" }
+                ]
+            },
+            air: {
+                title: "Urban Air Pass",
+                subtitle: "Perfect for layovers and short airport visits",
+                icon: "fas fa-plane",
+                durations: ["6 hours", "12 hours", "24h"],
+                pricing: { "6 hours": 35, "12 hours": 55, "24h": 75 },
+                features: [
+                    "Airport transfer included",
+                    "Express city tour",
+                    "Top 3 must-see attractions",
+                    "Luggage storage service",
+                    "Fast-track entry",
+                    "Return airport transfer"
+                ],
+                benefits: [
+                    { icon: "fas fa-clock", text: "Time optimized" },
+                    { icon: "fas fa-shuttle-van", text: "Airport transfer" },
+                    { icon: "fas fa-suitcase", text: "Luggage storage" },
+                    { icon: "fas fa-route", text: "Guided route" }
+                ]
+            },
+            sea: {
+                title: "Urban Sea Pass",
+                subtitle: "Shore excursions for cruise passengers",
+                icon: "fas fa-ship",
+                durations: ["4 hours", "8 hours", "12 hours"],
+                pricing: { "4 hours": 30, "8 hours": 50, "12 hours": 70 },
+                features: [
+                    "Port pickup and drop-off",
+                    "Coastal attractions focus",
+                    "Maritime museum access",
+                    "Seafood restaurant discounts",
+                    "Beach access included",
+                    "Flexible timing"
+                ],
+                benefits: [
+                    { icon: "fas fa-anchor", text: "Port transfers" },
+                    { icon: "fas fa-water", text: "Coastal focus" },
+                    { icon: "fas fa-fish", text: "Seafood discounts" },
+                    { icon: "fas fa-clock", text: "Flexible timing" }
+                ]
+            }
+        };
+
+        // Router Implementation
+        class Router {
+            constructor() {
+                this.routes = {
+                    '/': this.renderHomePage,
+                    '/city/:cityName': this.renderCityPage,
+                    '/city/:cityName/pass/:passType': this.renderPassPage
+                };
+                
+                window.addEventListener('popstate', () => {
+                    this.handleRoute(window.location.pathname);
+                });
+                
+                // Handle initial load
+                this.handleRoute(window.location.pathname || '/');
+            }
+
+            handleRoute(path) {
+                AppState.currentRoute = path;
+                this.updateBreadcrumb(path);
+                this.updateScrollProgress();
+                
+                // Parse route parameters
+                const params = this.parseRoute(path);
+                
+                if (params) {
+                    const { route, cityName, passType } = params;
+                    
+                    if (route === '/') {
+                        this.renderHomePage();
+                    } else if (route === '/city/:cityName') {
+                        AppState.currentCity = cityName;
+                        this.renderCityPage(cityName);
+                    } else if (route === '/city/:cityName/pass/:passType') {
+                        AppState.currentCity = cityName;
+                        AppState.currentPass = passType;
+                        this.renderPassPage(cityName, passType);
+                    }
+                } else {
+                    this.render404();
+                }
+            }
+
+            parseRoute(path) {
+                if (path === '/') return { route: '/' };
+                
+                const cityMatch = path.match(/^\/city\/([^\/]+)$/);
+                if (cityMatch) {
+                    return { route: '/city/:cityName', cityName: cityMatch[1] };
+                }
+                
+                const passMatch = path.match(/^\/city\/([^\/]+)\/pass\/([^\/]+)$/);
+                if (passMatch) {
+                    return { 
+                        route: '/city/:cityName/pass/:passType', 
+                        cityName: passMatch[1], 
+                        passType: passMatch[2] 
+                    };
+                }
+                
+                return null;
+            }
+
+            updateBreadcrumb(path) {
+                const breadcrumb = document.getElementById('breadcrumb');
+                const params = this.parseRoute(path);
+                
+                if (!params) {
+                    breadcrumb.innerHTML = '';
+                    return;
+                }
+                
+                let breadcrumbHTML = '<a href="#" onclick="navigateTo(\'/\')">Home</a>';
+                
+                if (params.cityName) {
+                    const cityDisplayName = cityData[params.cityName]?.name || params.cityName;
+                    breadcrumbHTML += ' <span class="separator">></span> ';
+                    breadcrumbHTML += `<a href="#" onclick="navigateTo('/city/${params.cityName}')">${cityDisplayName}</a>`;
+                }
+                
+                if (params.passType) {
+                    const passDisplayName = passData[params.passType]?.title || params.passType;
+                    breadcrumbHTML += ' <span class="separator">></span> ';
+                    breadcrumbHTML += `<span class="text-[var(--color-text)]">${passDisplayName}</span>`;
+                }
+                
+                breadcrumb.innerHTML = breadcrumbHTML;
+            }
+
+            updateScrollProgress() {
+                const updateProgress = () => {
+                    const scrollTop = window.pageYOffset;
+                    const docHeight = document.body.offsetHeight - window.innerHeight;
+                    const scrollPercent = (scrollTop / docHeight) * 100;
+                    document.getElementById('scroll-progress').style.width = scrollPercent + '%';
+                };
+                
+                window.addEventListener('scroll', updateProgress);
+                updateProgress();
+            }
+
+            renderHomePage() {
+                const content = document.getElementById('main-content');
+                content.innerHTML = `
+                    <div class="page-transition">
+                        <!-- Hero Section -->
+                        <section class="relative h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+                            <div class="absolute inset-0">
+                                <img src="/placeholder.svg?height=1080&width=1920" alt="Morocco" class="w-full h-full object-cover opacity-20">
+                            </div>
+                            <div class="relative text-center px-4 max-w-4xl mx-auto">
+                                <h1 class="text-5xl md:text-7xl font-bold mb-6 text-[var(--color-text)]">
+                                    My Urban Pass
+                                </h1>
+                                <p class="text-xl md:text-2xl mb-8 text-[var(--color-text-muted)]">
+                                    Your smart companion for authentic Moroccan travel experiences
+                                </p>
+                                <p class="text-lg mb-12 text-[var(--color-text-muted)] max-w-2xl mx-auto">
+                                    My Urban Pass is a digital-first system that unifies city exploration—unlocking museums, landmarks, public transport, and local discounts with one card. Operating in Casablanca, Marrakech, Rabat, Fès, Tangier, Agadir, Essaouira; expanding across Morocco and MENA.
+                                </p>
+                                <button onclick="scrollToSection('cities')" class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-lg">
+                                    Explore Cities
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- Cities Section -->
+                        <section id="cities" class="py-20 bg-[var(--color-bg)]">
+                            <div class="container mx-auto px-4">
+                                <div class="text-center mb-16">
+                                    <h2 class="text-4xl font-bold mb-4 text-[var(--color-text)]">Discover Morocco</h2>
+                                    <p class="text-xl text-[var(--color-text-muted)] max-w-2xl mx-auto">
+                                        Choose your destination and start exploring with our smart city passes
+                                    </p>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    ${Object.entries(cityData).map(([cityKey, city]) => `
+                                        <div class="city-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden cursor-pointer" onclick="navigateTo('/city/${cityKey}')">
+                                            <div class="relative h-48">
+                                                <img src="${city.heroImage}" alt="${city.name}" class="w-full h-full object-cover">
+                                                <div class="absolute top-4 right-4">
+                                                    <span class="bg-[var(--color-primary)] text-white px-3 py-1 rounded-full text-sm font-medium">
+                                                        ${city.availablePasses.length} Pass${city.availablePasses.length > 1 ? 'es' : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="p-6">
+                                                <h3 class="text-2xl font-bold mb-2 text-[var(--color-text)]">${city.name}</h3>
+                                                <p class="text-[var(--color-text-muted)] mb-4">${city.description}</p>
+                                                <div class="flex flex-wrap gap-2 mb-4">
+                                                    ${city.availablePasses.map(pass => `
+                                                        <span class="bg-[var(--color-bg-accent)] text-[var(--color-text)] px-3 py-1 rounded-full text-sm">
+                                                            <i class="${passData[pass].icon} mr-1"></i>
+                                                            ${passData[pass].title.replace('Urban ', '')}
+                                                        </span>
+                                                    `).join('')}
+                                                </div>
+                                                <div class="flex items-center justify-between">
+                                                    <span class="text-[var(--color-text-muted)]">From €25/day</span>
+                                                    <i class="fas fa-arrow-right text-[var(--color-primary)]"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Features Section -->
+                        <section class="py-20 bg-[var(--color-bg-alt)]">
+                            <div class="container mx-auto px-4">
+                                <div class="text-center mb-16">
+                                    <h2 class="text-4xl font-bold mb-4 text-[var(--color-text)]">Why Choose My Urban Pass?</h2>
+                                    <p class="text-xl text-[var(--color-text-muted)]">Smart, convenient, and cost-effective travel solutions</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div class="text-center p-6">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="fas fa-piggy-bank text-2xl text-white"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Save Money</h3>
+                                        <p class="text-[var(--color-text-muted)]">Save up to 60% on attractions and transportation with our bundled passes</p>
+                                    </div>
+                                    
+                                    <div class="text-center p-6">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="fas fa-bolt text-2xl text-white"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Skip Lines</h3>
+                                        <p class="text-[var(--color-text-muted)]">Fast-track entry to popular attractions and museums</p>
+                                    </div>
+                                    
+                                    <div class="text-center p-6">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="fas fa-mobile-alt text-2xl text-white"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Digital First</h3>
+                                        <p class="text-[var(--color-text-muted)]">Everything on your phone with offline access and real-time updates</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    content.querySelector('.page-transition').classList.add('active');
+                }, 100);
+            }
+
+            renderCityPage(cityName) {
+                const city = cityData[cityName];
+                if (!city) {
+                    this.render404();
+                    return;
+                }
+
+                const content = document.getElementById('main-content');
+                content.innerHTML = `
+                    <div class="page-transition">
+                        <!-- Hero Section -->
+                        <section class="relative h-[600px]">
+                            <div class="absolute inset-0">
+                                <img src="${city.heroImage}" alt="${city.name}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+                            </div>
+                            <div class="relative container mx-auto px-6 h-full flex items-center">
+                                <div class="text-white">
+                                    <h1 class="text-5xl md:text-6xl font-bold mb-6">${city.name}</h1>
+                                    <p class="text-xl max-w-2xl">${city.description}</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Quick Facts -->
+                        <section class="bg-white dark:bg-gray-800 shadow-md relative -mt-16 z-10">
+                            <div class="container mx-auto px-6">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
+                                    <div class="flex items-center space-x-4">
+                                        <i class="fa-solid fa-calendar-alt text-3xl text-[var(--color-primary)]"></i>
+                                        <div>
+                                            <h3 class="font-semibold text-[var(--color-text)]">Best Time to Visit</h3>
+                                            <p class="text-[var(--color-text-muted)]">${city.bestTime}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <i class="fa-solid fa-wallet text-3xl text-[var(--color-primary)]"></i>
+                                        <div>
+                                            <h3 class="font-semibold text-[var(--color-text)]">Average Budget</h3>
+                                            <p class="text-[var(--color-text-muted)]">${city.budget}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <i class="fa-solid fa-clock text-3xl text-[var(--color-primary)]"></i>
+                                        <div>
+                                            <h3 class="font-semibold text-[var(--color-text)]">Recommended Stay</h3>
+                                            <p class="text-[var(--color-text-muted)]">${city.recommendedStay}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Pass Selection -->
+                        <section class="py-20 bg-[var(--color-bg-alt)]">
+                            <div class="container mx-auto px-4">
+                                <div class="text-center mb-16">
+                                    <h2 class="text-4xl font-bold mb-4 text-[var(--color-text)]">Choose Your ${city.name} Pass</h2>
+                                    <p class="text-xl text-[var(--color-text-muted)]">Select the perfect pass for your travel style</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-${city.availablePasses.length} gap-8 max-w-6xl mx-auto">
+                                    ${city.availablePasses.map(passType => {
+                                        const pass = passData[passType];
+                                        const minPrice = Math.min(...Object.values(pass.pricing));
+                                        return `
+                                            <div class="pass-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border-2 border-transparent hover:border-[var(--color-primary)] transition-all duration-300" onclick="navigateTo('/city/${cityName}/pass/${passType}')">
+                                                <div class="text-center mb-6">
+                                                    <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
+                                                        <i class="${pass.icon} text-2xl text-white"></i>
+                                                    </div>
+                                                    <h3 class="text-2xl font-bold mb-2 text-[var(--color-text)]">${pass.title}</h3>
+                                                    <p class="text-[var(--color-text-muted)] mb-4">${pass.subtitle}</p>
+                                                    <div class="text-3xl font-bold text-[var(--color-primary)]">€${minPrice}</div>
+                                                    <p class="text-sm text-[var(--color-text-muted)]">Starting price</p>
+                                                </div>
+                                                
+                                                <div class="space-y-3 mb-6">
+                                                    ${pass.benefits.slice(0, 4).map(benefit => `
+                                                        <div class="flex items-center">
+                                                            <i class="${benefit.icon} text-[var(--color-primary)] mr-3"></i>
+                                                            <span class="text-[var(--color-text)]">${benefit.text}</span>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                                
+                                                <button class="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white py-3 rounded-lg font-semibold transition-colors">
+                                                    View Details
+                                                </button>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Landmarks -->
+                        <section class="py-20 bg-[var(--color-bg)]">
+                            <div class="container mx-auto px-4">
+                                <h2 class="text-4xl font-bold mb-12 text-center text-[var(--color-text)]">Top Landmarks</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    ${city.landmarks.map((landmark, index) => `
+                                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                                            <img src="/placeholder.svg?height=200&width=400" alt="${landmark}" class="w-full h-48 object-cover">
+                                            <div class="p-6">
+                                                <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">${landmark}</h3>
+                                                <p class="text-[var(--color-text-muted)]">Discover the beauty and history of this iconic ${city.name} landmark.</p>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    content.querySelector('.page-transition').classList.add('active');
+                }, 100);
+            }
+
+            renderPassPage(cityName, passType) {
+                const city = cityData[cityName];
+                const pass = passData[passType];
+                
+                if (!city || !pass || !city.availablePasses.includes(passType)) {
+                    this.render404();
+                    return;
+                }
+
+                const content = document.getElementById('main-content');
+                content.innerHTML = `
+                    <div class="page-transition">
+                        <!-- Hero Section -->
+                        <section class="relative h-[500px] bg-gradient-to-br from-teal-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+                            <div class="absolute inset-0">
+                                <img src="${city.heroImage}" alt="${city.name}" class="w-full h-full object-cover opacity-30">
+                            </div>
+                            <div class="relative container mx-auto px-6 h-full flex items-center">
+                                <div class="max-w-4xl">
+                                    <div class="flex items-center mb-4">
+                                        <i class="${pass.icon} text-4xl text-[var(--color-primary)] mr-4"></i>
+                                        <span class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-full text-sm font-medium">
+                                            ${city.name}
+                                        </span>
+                                    </div>
+                                    <h1 class="text-5xl md:text-6xl font-bold mb-6 text-[var(--color-text)]">
+                                        ${pass.title} in ${city.name}
+                                    </h1>
+                                    <p class="text-xl text-[var(--color-text-muted)] mb-8 max-w-2xl">
+                                        ${pass.subtitle}
+                                    </p>
+                                    
+                                    <!-- Duration Selector -->
+                                    <div class="flex flex-wrap gap-4 mb-8">
+                                        ${pass.durations.map((duration, index) => `
+                                            <button 
+                                                class="duration-btn px-6 py-3 rounded-full border-2 transition-all duration-300 ${index === 0 ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white' : 'border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]'}"
+                                                onclick="selectDuration('${duration}', this)"
+                                                data-price="${pass.pricing[duration]}"
+                                            >
+                                                ${duration} - €${pass.pricing[duration]}
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                    
+                                    <button class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:shadow-lg">
+                                        <i class="fas fa-shopping-cart mr-2"></i>
+                                        Buy Now - €${pass.pricing[pass.durations[0]]}
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Key Benefits -->
+                        <section class="py-12 bg-[var(--color-bg)]">
+                            <div class="container mx-auto px-4">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    ${pass.benefits.map(benefit => `
+                                        <div class="text-center p-4">
+                                            <div class="w-12 h-12 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-3">
+                                                <i class="${benefit.icon} text-white"></i>
+                                            </div>
+                                            <p class="text-sm font-medium text-[var(--color-text)]">${benefit.text}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- How It Works -->
+                        <section class="py-20 bg-[var(--color-bg-alt)]">
+                            <div class="container mx-auto px-4">
+                                <h2 class="text-4xl font-bold mb-12 text-center text-[var(--color-text)]">How It Works</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold">1</div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Choose & Buy</h3>
+                                        <p class="text-[var(--color-text-muted)]">Select your pass duration and complete your purchase online</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold">2</div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Download App</h3>
+                                        <p class="text-[var(--color-text-muted)]">Get your digital pass and offline maps on your phone</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold">3</div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Start Exploring</h3>
+                                        <p class="text-[var(--color-text-muted)]">Show your pass at attractions and hop on public transport</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-[var(--color-primary)] rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold">4</div>
+                                        <h3 class="text-xl font-bold mb-2 text-[var(--color-text)]">Save & Enjoy</h3>
+                                        <p class="text-[var(--color-text-muted)]">Skip lines, save money, and discover ${city.name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Features Grid -->
+                        <section class="py-20 bg-[var(--color-bg)]">
+                            <div class="container mx-auto px-4">
+                                <h2 class="text-4xl font-bold mb-12 text-center text-[var(--color-text)]">What's Included</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    ${pass.features.map((feature, index) => `
+                                        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                                            <div class="w-12 h-12 bg-[var(--color-primary)] rounded-lg flex items-center justify-center mb-4">
+                                                <i class="fas fa-check text-white"></i>
+                                            </div>
+                                            <h3 class="text-lg font-bold mb-2 text-[var(--color-text)]">${feature}</h3>
+                                            <p class="text-[var(--color-text-muted)]">Included with your ${pass.title}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Pricing Options -->
+                        <section class="py-20 bg-[var(--color-bg-alt)]">
+                            <div class="container mx-auto px-4">
+                                <h2 class="text-4xl font-bold mb-12 text-center text-[var(--color-text)]">Choose Your Duration</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-${pass.durations.length} gap-6 max-w-4xl mx-auto">
+                                    ${pass.durations.map((duration, index) => `
+                                        <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg text-center ${index === 1 ? 'border-2 border-[var(--color-primary)] relative' : ''}">
+                                            ${index === 1 ? '<div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-[var(--color-primary)] text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</div>' : ''}
+                                            <h3 class="text-2xl font-bold mb-2 text-[var(--color-text)]">${duration}</h3>
+                                            <div class="text-4xl font-bold text-[var(--color-primary)] mb-4">€${pass.pricing[duration]}</div>
+                                            <p class="text-[var(--color-text-muted)] mb-6">Perfect for ${duration === '24h' ? 'quick visits' : duration === '48h' ? 'weekend trips' : duration === '72h' ? 'extended stays' : 'long explorations'}</p>
+                                            <button class="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white py-3 rounded-lg font-semibold transition-colors">
+                                                Select ${duration}
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- FAQ Section -->
+                        <section class="py-20 bg-[var(--color-bg)]">
+                            <div class="container mx-auto px-4">
+                                <h2 class="text-4xl font-bold mb-12 text-center text-[var(--color-text)]">Frequently Asked Questions</h2>
+                                <div class="max-w-3xl mx-auto space-y-4">
+                                    ${this.generateFAQ(passType, cityName)}
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cross-selling -->
+                        <section class="py-20 bg-[var(--color-bg-alt)]">
+                            <div class="container mx-auto px-4">
+                                <h2 class="text-4xl font-bold mb-12 text-center text-[var(--color-text)]">Explore Other Passes in ${city.name}</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                                    ${city.availablePasses.filter(p => p !== passType).map(otherPass => {
+                                        const otherPassData = passData[otherPass];
+                                        const minPrice = Math.min(...Object.values(otherPassData.pricing));
+                                        return `
+                                            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg cursor-pointer hover:shadow-xl transition-shadow" onclick="navigateTo('/city/${cityName}/pass/${otherPass}')">
+                                                <div class="flex items-center mb-4">
+                                                    <div class="w-12 h-12 bg-[var(--color-primary)] rounded-lg flex items-center justify-center mr-4">
+                                                        <i class="${otherPassData.icon} text-white"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="text-xl font-bold text-[var(--color-text)]">${otherPassData.title}</h3>
+                                                        <p class="text-[var(--color-text-muted)]">From €${minPrice}</p>
+                                                    </div>
+                                                </div>
+                                                <p class="text-[var(--color-text-muted)] mb-4">${otherPassData.subtitle}</p>
+                                                <button class="text-[var(--color-primary)] font-semibold hover:underline">
+                                                    Learn More <i class="fas fa-arrow-right ml-1"></i>
+                                                </button>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    content.querySelector('.page-transition').classList.add('active');
+                }, 100);
+            }
+
+            generateFAQ(passType, cityName) {
+                const faqs = {
+                    city: [
+                        { q: "How long is the pass valid?", a: "Your pass is valid for consecutive days from first use." },
+                        { q: "Can I use public transport?", a: "Yes, unlimited public transportation is included." },
+                        { q: "Do I need to book attractions in advance?", a: "Most attractions don't require booking, but some may during peak season." }
+                    ],
+                    air: [
+                        { q: "Is airport transfer included?", a: "Yes, round-trip airport transfer is included in all Air Pass options." },
+                        { q: "What if my flight is delayed?", a: "We offer flexible timing and can adjust your itinerary accordingly." },
+                        { q: "Can I store my luggage?", a: "Yes, luggage storage service is included at partner locations." }
+                    ],
+                    sea: [
+                        { q: "Is port pickup included?", a: "Yes, we provide pickup and drop-off at the cruise port." },
+                        { q: "What if my ship is delayed?", a: "We monitor ship schedules and adjust pickup times accordingly." },
+                        { q: "Can I extend my tour?", a: "Yes, you can upgrade to longer durations based on availability." }
+                    ]
+                };
+
+                return faqs[passType].map(faq => `
+                    <details class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                        <summary class="font-semibold text-[var(--color-text)] cursor-pointer hover:text-[var(--color-primary)]">
+                            ${faq.q}
+                        </summary>
+                        <p class="mt-4 text-[var(--color-text-muted)]">${faq.a}</p>
+                    </details>
+                `).join('');
+            }
+
+            render404() {
+                const content = document.getElementById('main-content');
+                content.innerHTML = `
+                    <div class="page-transition">
+                        <section class="py-20 text-center">
+                            <div class="container mx-auto px-4">
+                                <h1 class="text-6xl font-bold mb-4 text-[var(--color-text)]">404</h1>
+                                <h2 class="text-2xl mb-8 text-[var(--color-text-muted)]">Page Not Found</h2>
+                                <button onclick="navigateTo('/')" class="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-8 py-4 rounded-full">
+                                    Return Home
+                                </button>
+                            </div>
+                        </section>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    content.querySelector('.page-transition').classList.add('active');
+                }, 100);
+            }
+        }
+
+        // Navigation Functions
+        function navigateTo(path) {
+            history.pushState(null, '', path);
+            router.handleRoute(path);
+            closeMobileMenu();
+        }
+
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Theme Management
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                AppState.theme = 'light';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                AppState.theme = 'dark';
+                localStorage.setItem('theme', 'dark');
+            }
+            
+            updateThemeIcons();
+        }
+
+        function updateThemeIcons() {
+            const moonIcons = document.querySelectorAll('.moon-icon');
+            const sunIcons = document.querySelectorAll('.sun-icon');
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            moonIcons.forEach(icon => {
+                icon.classList.toggle('hidden', isDark);
+            });
+            
+            sunIcons.forEach(icon => {
+                icon.classList.toggle('hidden', !isDark);
+            });
+        }
+
+        // Mobile Menu Functions
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.remove('open');
+        }
+
+        // Pass Page Functions
+        function selectDuration(duration, button) {
+            // Remove selected class from all buttons
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.classList.remove('border-[var(--color-primary)]', 'bg-[var(--color-primary)]', 'text-white');
+                btn.classList.add('border-[var(--color-border)]', 'text-[var(--color-text)]');
+            });
+            
+            // Add selected class to clicked button
+            button.classList.remove('border-[var(--color-border)]', 'text-[var(--color-text)]');
+            button.classList.add('border-[var(--color-primary)]', 'bg-[var(--color-primary)]', 'text-white');
+            
+            AppState.selectedDuration = duration;
+            
+            // Update buy button price
+            const price = button.dataset.price;
+            const buyButton = document.querySelector('button[class*="Buy Now"]');
+            if (buyButton) {
+                buyButton.innerHTML = `<i class="fas fa-shopping-cart mr-2"></i>Buy Now - €${price}`;
+            }
+        }
+
+        // Initialize Application
+        function initializeApp() {
+            // Apply stored theme
+            const storedTheme = localStorage.getItem('theme') || 'light';
+            if (storedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+            updateThemeIcons();
+            
+            // Initialize router
+            window.router = new Router();
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('mobile-menu');
+                const menuBtn = document.getElementById('mobile-menu-btn');
+                
+                if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        // Start the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

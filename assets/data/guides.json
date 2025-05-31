@@ -1,0 +1,129 @@
+{
+  "city": "test",
+  "guides": [
+    {
+      "id": "g1",
+      "name": "Youssef Amrani",
+      "profile_image": "https://images.unsplash.com/photo-1566753323558-f4e0952af115?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bW9yb2NjYW4lMjBtYW58ZW58MHx8MHx8&auto=format&fit=crop&w=400&q=60",
+      "specialization": "Cultural Expert & Historian",
+      "category": "culture",
+      "rating": 4.95,
+      "review_count": 128,
+      "languages": ["English", "French", "Arabic"],
+      "experience_years": 12,
+      "description": "Born and raised in the heart of Marrakech, I love sharing the rich cultural heritage and hidden gems of my beautiful city.",
+      "about": "As a certified tour guide with a degree in Moroccan history, I've been showing visitors the beauty of Marrakech for over 12 years. My specialty is connecting travelers with authentic local experiences that most tourists never get to see. From the hidden corners of the ancient medina to the best local restaurants, I'll create memories that will last a lifetime.",
+      "specialties": [
+        {
+          "name": "Medina Tours",
+          "icon": "fa-landmark"
+        },
+        {
+          "name": "Moroccan Cuisine",
+          "icon": "fa-utensils"
+        },
+        {
+          "name": "Historical Sites",
+          "icon": "fa-building-columns"
+        },
+        {
+          "name": "Local Artisans",
+          "icon": "fa-hands"
+        }
+      ]
+    },
+    {
+      "id": "g2",
+      "name": "Fatima Zahra",
+      "profile_image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0MBAh1_8sj6rA6QhH31iBkhG2v7rLce4OSQ&s",
+      "specialization": "Food & Market Expert",
+      "category": "food",
+      "rating": 4.8,
+      "review_count": 94,
+      "languages": ["English", "Spanish", "Arabic"],
+      "experience_years": 8,
+      "description": "Join me for an authentic culinary journey through Marrakech's vibrant food scene, from street food to cooking classes.",
+      "about": "I come from a long line of Marrakech cooks and food lovers. My grandmother taught me all her secret recipes, and I love sharing the rich flavors of Moroccan cuisine with visitors. I lead market tours, cooking classes, and food tastings that will introduce you to the heart of Moroccan culture through its delicious food. I also know all the best restaurants in town - from high-end dining to local gems where only Moroccans eat!",
+      "specialties": [
+        {
+          "name": "Market Tours",
+          "icon": "fa-cart-shopping"
+        },
+        {
+          "name": "Cooking Classes",
+          "icon": "fa-kitchen-set"
+        },
+        {
+          "name": "Street Food",
+          "icon": "fa-utensils"
+        },
+        {
+          "name": "Restaurant Recommendations",
+          "icon": "fa-plate-wheat"
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "name": "Omar Benali",
+      "profile_image": "https://images.unsplash.com/photo-1569587112315-0d0d72356c82?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8bW9yb2NjYW4lMjBtYW58ZW58MHx8MHx8&auto=format&fit=crop&w=400&q=60",
+      "specialization": "Adventure & Nature Guide",
+      "category": "adventure",
+      "rating": 4.9,
+      "review_count": 76,
+      "languages": ["English", "French", "Arabic", "German"],
+      "experience_years": 10,
+      "description": "I specialize in adventure tours of the Atlas Mountains, desert camping, and outdoor activities around Marrakech.",
+      "about": "I've been leading adventure tours in Morocco for a decade after studying environmental science. My passion is connecting people with Morocco's stunning natural beauty - from the Atlas Mountains to the Sahara Desert. I can organize everything from day hikes to multi-day adventures, all while ensuring safety and comfort. My specialty is creating custom adventures that match your exact interests and fitness level.",
+      "specialties": [
+        {
+          "name": "Atlas Mountains",
+          "icon": "fa-mountain"
+        },
+        {
+          "name": "Desert Excursions",
+          "icon": "fa-campground"
+        },
+        {
+          "name": "Camel Treks",
+          "icon": "fa-horse"
+        },
+        {
+          "name": "Quad Biking",
+          "icon": "fa-motorcycle"
+        }
+      ]
+    },
+    {
+      "id": "g4",
+      "name": "Sana Kaddouri",
+      "profile_image": "https://images.unsplash.com/photo-1629392554711-9b547918eaae?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fG1vcm9jY2FuJTIwd29tYW58ZW58MHx8MHx8&auto=format&fit=crop&w=400&q=60",
+      "specialization": "Photography & Art Specialist",
+      "category": "photography",
+      "rating": 4.85,
+      "review_count": 62,
+      "languages": ["English", "French", "Arabic"],
+      "experience_years": 7,
+      "description": "Professional photographer offering photo tours of Marrakech's most picturesque locations and photography workshops.",
+      "about": "I studied photography in Paris before returning to my hometown of Marrakech. I know every perfect angle, hidden corner, and best lighting spot in the city. My tours combine photography instruction with cultural insights, ensuring you capture stunning images while learning about Moroccan life. Whether you're a beginner with a smartphone or a pro with advanced gear, I'll help you create beautiful images and memories.",
+      "specialties": [
+        {
+          "name": "Medina Photo Walks",
+          "icon": "fa-camera"
+        },
+        {
+          "name": "Sunset Photography",
+          "icon": "fa-sun"
+        },
+        {
+          "name": "Portrait Sessions",
+          "icon": "fa-user"
+        },
+        {
+          "name": "Instagram Spots",
+          "icon": "fa-location-dot"
+        }
+      ]
+    }
+  ]
+} 
